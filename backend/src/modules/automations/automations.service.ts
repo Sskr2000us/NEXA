@@ -13,11 +13,7 @@ export class AutomationsService {
 
     let query = client
       .from('automations')
-      .select(`
-        *,
-        trigger_conditions,
-        actions
-      `)
+      .select('*')
       .eq('home_id', homeId)
       .is('deleted_at', null);
 

@@ -15,7 +15,7 @@ export class CreateAutomationDto {
 
   @ApiProperty({ example: 'Morning Routine' })
   @IsString()
-  automation_name: string;
+  name: string;
 
   @ApiProperty({ enum: AutomationType })
   @IsEnum(AutomationType)
@@ -32,7 +32,12 @@ export class CreateAutomationDto {
     ],
   })
   @IsArray()
-  trigger_conditions: any[];
+  triggers: any[];
+
+  @ApiProperty({ required: false, example: [] })
+  @IsArray()
+  @IsOptional()
+  conditions?: any[];
 
   @ApiProperty({
     example: [
