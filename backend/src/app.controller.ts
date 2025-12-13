@@ -13,7 +13,7 @@ export class AppController {
       message: 'NEXA Smart Home API',
       version: '1.0.0',
       documentation: '/api/docs',
-      health: '/api/v1/health',
+      health: '/health',
     };
   }
 
