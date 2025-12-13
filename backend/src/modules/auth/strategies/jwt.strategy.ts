@@ -37,8 +37,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         );
         
         client.getSigningKey(decoded.kid, (err, key) => {
-          if (err) {
-            return done(err, null);
+          if (err || !key) {
+            return done(err || new Error('Unable to find signing key'), null);
           }
           const signingKey = key.getPublicKey();
           done(null, signingKey);
