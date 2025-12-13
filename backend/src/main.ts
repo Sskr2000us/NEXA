@@ -24,7 +24,8 @@ async function bootstrap() {
   });
 
   // Global prefix
-  app.setGlobalPrefix(configService.get('API_PREFIX') || 'api/v1');
+  const apiPrefix = configService.get('API_PREFIX') || 'api/v1';
+  app.setGlobalPrefix(apiPrefix);
 
   // API Versioning
   app.enableVersioning({
@@ -65,12 +66,13 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = configService.get('PORT') || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 
+  const apiPrefix = configService.get('API_PREFIX') || 'api/v1';
   console.log(`
   🚀 NEXA Backend is running!
   
-  📍 API: http://localhost:${port}/${configService.get('API_PREFIX')}
+  📍 API: http://localhost:${port}/${apiPrefix}
   📚 Swagger Docs: http://localhost:${port}/api/docs
   🌍 Environment: ${configService.get('NODE_ENV')}
   `);
