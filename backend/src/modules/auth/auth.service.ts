@@ -31,9 +31,10 @@ export class AuthService {
       throw new UnauthorizedException(error.message);
     }
 
-    // Create user profile in public.users table
+    // Create user profile in public.users table (use service client to bypass RLS)
     if (data.user) {
-      const { error: profileError } = await client.from('users').insert({
+      const serviceClient = this.supabaseService.getServiceClient();
+      const { error: profileError } = await serviceClient.from('users').insert({
         id: data.user.id,
         email: data.user.email,
         full_name: signUpDto.fullName,
@@ -71,8 +72,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Update last login
-    await client
+    // Update last login (use service client to bypass RLS)
+    const serviceClient = this.supabaseService.getServiceClient();
+    await serviceClient
       .from('users')
       .update({ last_login_at: new Date().toISOString() })
       .eq('id', data.user!.id);
