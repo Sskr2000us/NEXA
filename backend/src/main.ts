@@ -23,6 +23,16 @@ async function bootstrap() {
     credentials: true,
   });
 
+  // Raw health check - bypasses all middleware
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.get('/api/v1/health', (req: any, res: any) => {
+    res.status(200).json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    });
+  });
+
   // Global prefix
   const apiPrefix = configService.get('API_PREFIX') || 'api/v1';
   app.setGlobalPrefix(apiPrefix);
