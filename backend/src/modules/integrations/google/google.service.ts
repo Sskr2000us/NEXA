@@ -27,12 +27,25 @@ export class GoogleIntegrationService {
       'https://www.googleapis.com/auth/pubsub',
     ];
 
-    return this.oauth2Client.generateAuthUrl({
+    const projectId = this.configService.get('GOOGLE_DEVICE_ACCESS_PROJECT_ID');
+
+    const authUrl = this.oauth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: scopes,
       state: userId, // Pass userId in state for callback
       prompt: 'consent',
+      // Add redirect_uri parameter to ensure correct OAuth client
+      redirect_uri: this.configService.get('GOOGLE_REDIRECT_URI'),
     });
+
+    // If Device Access project exists, append it to help link structures
+    if (projectId) {
+      this.logger.log(`Generating OAuth URL with Device Access project: ${projectId}`);
+      // The structure linking happens automatically when SDM scope is authorized
+      // with the correct OAuth client ID that matches the Device Access project
+    }
+
+    return authUrl;
   }
 
   async handleCallback(code: string, userId: string) {
