@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SupabaseService } from '../../../common/supabase/supabase.service';
+import { SurfacesService } from '../../surfaces/surfaces.service';
 import { google } from 'googleapis';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class GoogleIntegrationService {
   constructor(
     private configService: ConfigService,
     private supabaseService: SupabaseService,
+    private surfacesService: SurfacesService,
   ) {
     this.oauth2Client = new google.auth.OAuth2(
       this.configService.get('GOOGLE_CLIENT_ID'),
@@ -108,11 +110,10 @@ export class GoogleIntegrationService {
 
       const homeId = homes[0].id;
 
-      // In production, you would call Google Home Graph API here
-      // For now, we'll simulate with placeholder data
-      const googleDevices = await this.fetchGoogleDevices(integration.access_token);
+      // Fetch devices and surfaces from Google
+      const { devices: googleDevices, surfaces: googleSurfaces } = await this.fetchGoogleDevices(integration.access_token, homeId);
 
-      // Import devices into NEXA
+      // Import controllable devices into NEXA
       for (const device of googleDevices) {
         await client
           .from('devices')
@@ -130,6 +131,24 @@ export class GoogleIntegrationService {
           });
       }
 
+      // Import surfaces (smart displays, speakers) separately
+      for (const surface of googleSurfaces) {
+        await this.surfacesService.upsert({
+          home_id: homeId,
+          name: surface.name,
+          type: surface.type,
+          provider: 'google',
+          external_id: surface.id,
+          capabilities: surface.capabilities,
+          location: surface.room,
+          status: 'online',
+          metadata: {
+            google_type: surface.googleType,
+            google_traits: surface.traits,
+          },
+        });
+      }
+
       // Update last sync time
       await client
         .from('user_integrations')
@@ -139,6 +158,7 @@ export class GoogleIntegrationService {
       return {
         success: true,
         devices_synced: googleDevices.length,
+        surfaces_synced: googleSurfaces.length,
       };
     } catch (error) {
       this.logger.error(`Device sync error: ${error.message}`);
@@ -173,12 +193,44 @@ export class GoogleIntegrationService {
       .single();
 
     if (error || !data) {
-      return { connected: false };
+      return { isConnected: false };
+    }
+
+    // Get user's home
+    const { data: homes } = await client
+      .from('homes')
+      .select('id')
+      .eq('owner_id', userId)
+      .limit(1);
+
+    const homeId = homes?.[0]?.id;
+
+    // Get device count for this user's home
+    let deviceCount = 0;
+    let surfaceCount = 0;
+
+    if (homeId) {
+      const { count: devCount } = await client
+        .from('devices')
+        .select('*', { count: 'exact', head: true })
+        .eq('home_id', homeId)
+        .eq('integration_platform', 'google');
+
+      const { count: surfCount } = await client
+        .from('surfaces')
+        .select('*', { count: 'exact', head: true })
+        .eq('home_id', homeId)
+        .eq('provider', 'google');
+
+      deviceCount = devCount || 0;
+      surfaceCount = surfCount || 0;
     }
 
     return {
-      connected: data.is_active,
-      last_synced: data.last_synced_at,
+      isConnected: data.is_active,
+      lastSynced: data.last_synced_at,
+      deviceCount,
+      surfaceCount,
     };
   }
 
@@ -271,7 +323,7 @@ export class GoogleIntegrationService {
     };
   }
 
-  private async fetchGoogleDevices(accessToken: string): Promise<any[]> {
+  private async fetchGoogleDevices(accessToken: string, homeId: string): Promise<{ devices: any[], surfaces: any[] }> {
     try {
       // Set credentials for Google API client
       this.oauth2Client.setCredentials({
@@ -284,26 +336,32 @@ export class GoogleIntegrationService {
         auth: this.oauth2Client,
       });
 
-      // Get project ID from environment (you need to set this)
+      // Get project ID from environment
       const projectId = this.configService.get('GOOGLE_DEVICE_ACCESS_PROJECT_ID');
       
       if (!projectId) {
         this.logger.warn('GOOGLE_DEVICE_ACCESS_PROJECT_ID not configured, returning mock data');
         // Return mock data if project not configured
-        return [
-          {
-            id: 'google-device-1',
-            name: 'Living Room Light',
-            type: 'action.devices.types.LIGHT',
-            traits: ['OnOff', 'Brightness'],
-          },
-          {
-            id: 'google-device-2',
-            name: 'Bedroom Thermostat',
-            type: 'action.devices.types.THERMOSTAT',
-            traits: ['TemperatureSetting'],
-          },
-        ];
+        return {
+          devices: [
+            {
+              id: 'google-device-1',
+              name: 'Living Room Light',
+              type: 'action.devices.types.LIGHT',
+              traits: ['OnOff', 'Brightness'],
+            },
+          ],
+          surfaces: [
+            {
+              id: 'google-surface-1',
+              name: 'Kitchen Display',
+              type: 'smart_display',
+              googleType: 'sdm.devices.types.DISPLAY',
+              capabilities: ['voice', 'screen', 'touch'],
+              traits: ['Assistant'],
+            },
+          ],
+        };
       }
 
       // List all devices
@@ -311,21 +369,72 @@ export class GoogleIntegrationService {
         parent: `enterprises/${projectId}`,
       });
 
-      const devices = response.data.devices || [];
+      const allDevices = response.data.devices || [];
       
-      // Map SDM devices to our format
-      return devices.map((device: any) => ({
-        id: device.name,
-        name: device.traits['sdm.devices.traits.Info']?.customName || 'Unnamed Device',
-        type: device.type || 'action.devices.types.UNKNOWN',
-        traits: Object.keys(device.traits || {}),
-        room: device.parentRelations?.[0]?.displayName,
-      }));
+      // Surface types (displays, speakers) - client interfaces
+      const surfaceTypes = [
+        'sdm.devices.types.DISPLAY',
+        'sdm.devices.types.SPEAKER',
+        'sdm.devices.types.CHROMECAST',
+      ];
+
+      const devices: any[] = [];
+      const surfaces: any[] = [];
+
+      // Categorize each device
+      for (const device of allDevices) {
+        const deviceType = device.type || '';
+        const deviceName = device.traits?.['sdm.devices.traits.Info']?.customName || 'Unnamed Device';
+        const deviceId = device.name;
+        const room = device.parentRelations?.[0]?.displayName;
+        const traits = Object.keys(device.traits || {});
+
+        if (surfaceTypes.includes(deviceType)) {
+          // This is a surface (smart display/speaker) - a client interface
+          surfaces.push({
+            id: deviceId,
+            name: deviceName,
+            type: this.mapSurfaceType(deviceType),
+            googleType: deviceType,
+            capabilities: this.getSurfaceCapabilities(deviceType, traits),
+            traits,
+            room,
+          });
+        } else {
+          // This is a controllable device (light, thermostat, etc.)
+          devices.push({
+            id: deviceId,
+            name: deviceName,
+            type: deviceType,
+            traits,
+            room,
+          });
+        }
+      }
+
+      return { devices, surfaces };
     } catch (error) {
       this.logger.error(`Failed to fetch Google devices: ${error.message}`);
-      // Return empty array on error
-      return [];
+      // Return empty arrays on error
+      return { devices: [], surfaces: [] };
     }
+  }
+
+  private mapSurfaceType(googleType: string): 'smart_display' | 'voice_assistant' {
+    if (googleType === 'sdm.devices.types.DISPLAY') {
+      return 'smart_display';
+    }
+    return 'voice_assistant';
+  }
+
+  private getSurfaceCapabilities(deviceType: string, traits: string[]): string[] {
+    const capabilities: string[] = ['voice']; // All Google devices have voice
+
+    if (deviceType === 'sdm.devices.types.DISPLAY') {
+      capabilities.push('screen', 'touch');
+    }
+
+    return capabilities;
   }
 
   private mapGoogleDeviceType(googleType: string): string {

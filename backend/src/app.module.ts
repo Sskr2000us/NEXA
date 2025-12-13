@@ -15,6 +15,7 @@ import { InsightsModule } from './modules/insights/insights.module';
 import { TelemetryModule } from './modules/telemetry/telemetry.module';
 import { RealtimeModule } from './modules/realtime/realtime.module';
 import { IntegrationsModule } from './modules/integrations/integrations.module';
+import { SurfacesModule } from './modules/surfaces/surfaces.module';
 import { AppController } from './app.controller';
 import { HealthController } from './health.controller';
 
@@ -48,6 +49,7 @@ import { HealthController } from './health.controller';
     TelemetryModule,
     RealtimeModule,
     IntegrationsModule,
+    SurfacesModule,
   ],
   controllers: [AppController, HealthController],
   providers: [
