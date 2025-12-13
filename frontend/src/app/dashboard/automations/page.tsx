@@ -4,13 +4,17 @@ import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Settings, Power, Plus, Clock } from 'lucide-react'
+import AutomationBuilder from '@/components/AutomationBuilder'
+import { Settings, Power, Plus, Clock, Edit2, Trash2, AlertCircle, CheckCircle } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export default function AutomationsPage() {
   const [automations, setAutomations] = useState<any[]>([])
   const [homes, setHomes] = useState<any[]>([])
   const [selectedHome, setSelectedHome] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
+  const [showBuilder, setShowBuilder] = useState(false)
+  const [editingAutomation, setEditingAutomation] = useState<any>(null)
 
   useEffect(() => {
     loadHomes()
@@ -48,10 +52,49 @@ export default function AutomationsPage() {
   const handleToggle = async (id: string, enabled: boolean) => {
     try {
       await api.toggleAutomation(id, !enabled)
+      toast.success(enabled ? 'Automation disabled' : 'Automation enabled')
       loadAutomations(selectedHome)
     } catch (error) {
       console.error('Failed to toggle automation:', error)
+      toast.error('Failed to toggle automation')
     }
+  }
+
+  const handleSave = async (automationData: any) => {
+    try {
+      if (editingAutomation) {
+        await api.patch(`/automations/${editingAutomation.id}`, automationData)
+        toast.success('Automation updated')
+      } else {
+        await api.post('/automations', {
+          ...automationData,
+          home_id: selectedHome,
+        })
+        toast.success('Automation created')
+      }
+      setShowBuilder(false)
+      setEditin onClick={() => openBuilder()}gAutomation(null)
+      loadAutomations(selectedHome)
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to save automation')
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this automation?')) return
+
+    try {
+      await api.delete(`/automations/${id}`)
+      toast.success('Automation deleted')
+      loadAutomations(selectedHome)
+    } catch (error) {
+      toast.error('Failed to delete automation')
+    }
+  }
+
+  const openBuilder = (automation?: any) => {
+    setEditingAutomation(automation || null)
+    setShowBuilder(true)
   }
 
   if (isLoading) {
@@ -103,7 +146,7 @@ export default function AutomationsPage() {
             <p className="text-gray-600 mb-4">
               Create your first automation to make your home smarter
             </p>
-            <Button>
+            <Button onClick={() => openBuilder()}>
               <Plus className="w-4 h-4 mr-2" />
               Create Automation
             </Button>
@@ -117,9 +160,13 @@ export default function AutomationsPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center mb-2">
-                      <Settings className="w-5 h-5 text-gray-600 mr-2" />
+                      {automation.health_status === 'healthy' ? (
+                        <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
+                      ) : (
+                        <AlertCircle className="w-5 h-5 text-orange-600 mr-2" />
+                      )}
                       <h3 className="font-semibold text-gray-900">{automation.name}</h3>
-                      {automation.enabled ? (
+                      {automation.is_enabled ? (
                         <span className="ml-3 px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
                           Active
                         </span>
@@ -136,17 +183,17 @@ export default function AutomationsPage() {
 
                     <div className="space-y-2">
                       <div className="flex items-center text-sm">
-                        <span className="font-medium text-gray-700 mr-2">Trigger:</span>
-                        <span className="text-gray-600 capitalize">
-                          {automation.trigger?.type || 'N/A'}
+                        <span className="font-medium text-gray-700 mr-2">Triggers:</span>
+                        <span className="text-gray-600">
+                          {automation.triggers?.length || 0} trigger(s)
                         </span>
                       </div>
                       
-                      {automation.schedule && (
+                      {automation.last_executed_at && (
                         <div className="flex items-center text-sm">
                           <Clock className="w-4 h-4 text-gray-600 mr-2" />
                           <span className="text-gray-600">
-                            Scheduled: {automation.schedule}
+                            Last run: {new Date(automation.last_executed_at).toLocaleString()}
                           </span>
                         </div>
                       )}
@@ -157,23 +204,59 @@ export default function AutomationsPage() {
                           {automation.actions?.length || 0} action(s)
                         </span>
                       </div>
+
+                      {automation.total_executions > 0 && (
+                        <div className="flex items-center text-sm">
+                          <span className="font-medium text-gray-700 mr-2">Success Rate:</span>
+                          <span className="text-gray-600">
+                            {automation.success_count || 0}/{automation.total_executions} ({Math.round((automation.success_count / automation.total_executions) * 100)}%)
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <Button
-                    variant={automation.enabled ? 'outline' : 'primary'}
-                    size="sm"
-                    onClick={() => handleToggle(automation.id, automation.enabled)}
-                  >
-                    <Power className="w-4 h-4 mr-2" />
-                    {automation.enabled ? 'Disable' : 'Enable'}
-                  </Button>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => openBuilder(automation)}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleDelete(automation.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant={automation.is_enabled ? 'outline' : 'primary'}
+                      size="sm"
+                      onClick={() => handleToggle(automation.id, automation.is_enabled)}
+                    >
+                      <Power className="w-4 h-4 mr-2" />
+                      {automation.is_enabled ? 'Disable' : 'Enable'}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Automation Builder Modal */}
+      <AutomationBuilder
+        isOpen={showBuilder}
+        onClose={() => {
+          setShowBuilder(false)
+          setEditingAutomation(null)
+        }}
+        onSave={handleSave}
+        automation={editingAutomation}
+      />
     </div>
   )
 }

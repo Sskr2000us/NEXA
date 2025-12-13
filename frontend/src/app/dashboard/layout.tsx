@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/store/auth'
 import { SocketProvider } from '@/contexts/SocketContext'
-import { Home, Zap, Settings, Activity, Bell, LogOut, Palette, BarChart3, Plug, Users } from 'lucide-react'
+import { Home, Zap, Settings, Activity, Bell, LogOut, Palette, BarChart3, Plug, Users, Menu, X } from 'lucide-react'
 
 export default function DashboardLayout({
   children,
@@ -15,6 +15,7 @@ export default function DashboardLayout({
   const router = useRouter()
   const pathname = usePathname()
   const { user, isLoading, isAuthenticated, checkAuth, logout } = useAuth()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     checkAuth()
@@ -57,8 +58,35 @@ export default function DashboardLayout({
   return (
     <SocketProvider>
       <div className="min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200">
+        {/* Mobile Header */}
+        <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-40">
+          <h1 className="text-xl font-bold text-primary-600">NEXA</h1>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} lg:block hidden
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6 text-gray-600" />
+            ) : (
+              <Menu className="w-6 h-6 text-gray-600" />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <div
+          className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out z-40 ${
+            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 lg:top-0 top-16`}
+        >
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center h-16 px-6 border-b border-gray-200">
@@ -74,6 +102,7 @@ export default function DashboardLayout({
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
                     isActive
                       ? 'bg-primary-50 text-primary-600'
@@ -101,30 +130,29 @@ export default function DashboardLayout({
                 </p>
                 <p className="text-xs text-gray-500">{user?.email}</p>
               </div>
-              <button
-                onClick={()=> window.location.href='/dashboard/settings'}
-                className="flex items-center w-full px-4 py-2 mb-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Settings
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </button>
             </div>
+            <button
+              onClick={()=> window.location.href='/dashboard/settings'}
+              className="flex items-center w-full px-4 py-2 mb-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Settings
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </button>
           </div>
         </div>
 
         {/* Main content */}
-        <div className="pl-64">
-          <main className="p-8">{children}</main>
+        <div className="lg:pl-64 pt-16 lg:pt-0">
+          <main className="p-4 md:p-8">{children}</main>
         </div>
       </div>
-    </SocketProvideriv>
-    </div>
+    </SocketProvider>
   )
 }
