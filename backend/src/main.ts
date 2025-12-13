@@ -66,7 +66,16 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || configService.get('PORT') || 3000;
-  await app.listen(port, '0.0.0.0');
+  const server = await app.listen(port, '0.0.0.0');
+
+  // Fix Render timeouts
+  server.setTimeout(120000); // 120 seconds
+  if (server.keepAliveTimeout !== undefined) {
+    server.keepAliveTimeout = 120000;
+  }
+  if (server.headersTimeout !== undefined) {
+    server.headersTimeout = 120000;
+  }
 
   const baseUrl = configService.get('NODE_ENV') === 'production'
     ? 'https://nexa-backend-r7dp.onrender.com'
