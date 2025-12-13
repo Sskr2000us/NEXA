@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/store/auth'
 import { SocketProvider } from '@/contexts/SocketContext'
-import { Home, Zap, Settings, Activity, Bell, LogOut, Palette, BarChart3, Plug, Users, Menu, X, Brain } from 'lucide-react'
+import { Home, Zap, Settings, Activity, Bell, LogOut, Palette, BarChart3, Plug, Users, Menu, X, Brain, Shield, Building2, Mic, ShoppingCart, Wrench } from 'lucide-react'
 
 export default function DashboardLayout({
   children,
@@ -47,12 +47,18 @@ export default function DashboardLayout({
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Devices', href: '/dashboard/devices', icon: Zap },
+    { name: 'Predictive AI', href: '/dashboard/predictive', icon: Brain },
+    { name: 'Self-Healing', href: '/dashboard/self-healing', icon: Wrench },
+    { name: 'Security', href: '/dashboard/security', icon: Shield },
+    { name: 'Energy Optimizer', href: '/dashboard/energy-optimizer', icon: Activity },
+    { name: 'Voice Assistant', href: '/dashboard/voice-assistant', icon: Mic },
     { name: 'Scenes', href: '/dashboard/scenes', icon: Palette },
     { name: 'Automations', href: '/dashboard/automations', icon: Settings },
-    { name: 'Predictive AI', href: '/dashboard/predictive', icon: Brain },
-    { name: 'Energy Optimizer', href: '/dashboard/energy-optimizer', icon: Activity },
-    { name: 'Self-Healing', href: '/dashboard/self-healing', icon: Settings },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+    { name: 'Family', href: '/dashboard/family', icon: Users },
+    { name: 'Marketplace', href: '/dashboard/marketplace', icon: ShoppingCart },
+    { name: 'Installer', href: '/dashboard/installer', icon: Wrench },
+    { name: 'OEM Partners', href: '/dashboard/partners', icon: Building2 },
     { name: 'Integrations', href: '/dashboard/integrations', icon: Plug },
     { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
   ]
