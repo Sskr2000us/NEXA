@@ -91,7 +91,7 @@ export default function DevicesPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Devices</h1>
-          <p className="text-gray-600 mt-2">Manage and control your smart devices</p>
+          <p className="text-gray-600 mt-2">Manage and control your smart home devices</p>
         </div>
         <Button onClick={() => setShowAddModal(true)}>
           <Plus className="w-4 h-4 mr-2" />
