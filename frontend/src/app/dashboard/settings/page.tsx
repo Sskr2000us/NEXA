@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { User, Bell, Home, Shield, Palette, Users, Mail, Link2 } from 'lucide-react'
+import { User, Bell, Home, Shield, Palette, Users, Mail, Link2, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
@@ -146,6 +146,7 @@ export default function SettingsPage() {
     { id: 'homes', label: 'Homes & Members', icon: Home },
     { id: 'security', label: 'Security', icon: Shield },
     { id: 'integrations', label: 'Integrations', icon: Link2 },
+    { id: 'surfaces', label: 'Surfaces', icon: Monitor },
   ]
 
   return (
@@ -593,6 +594,33 @@ export default function SettingsPage() {
                     <p className="text-sm text-gray-500">
                       Apple HomeKit integration will be available soon.
                     </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Surfaces Tab */}
+          {activeTab === 'surfaces' && (
+            <div>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Manage Surfaces</CardTitle>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Client interfaces where NEXA can display information (smart displays, apps, voice assistants)
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-gray-600 mb-4">
+                      Go to the dedicated Surfaces page to manage your client interfaces
+                    </p>
+                    <Button
+                      onClick={() => window.location.href = '/dashboard/settings/surfaces'}
+                      variant="primary"
+                    >
+                      Manage Surfaces
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

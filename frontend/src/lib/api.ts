@@ -176,6 +176,34 @@ class ApiClient {
     const response = await this.client.post('/integrations/google/disconnect')
     return response.data
   }
+
+  // Surfaces methods
+  async getSurfaces(homeId: string) {
+    const response = await this.client.get(`/surfaces/home/${homeId}`)
+    return response.data
+  }
+
+  async createSurface(data: {
+    home_id: string
+    name: string
+    type: 'smart_display' | 'web_app' | 'mobile_app' | 'voice_assistant'
+    provider: 'google' | 'amazon' | 'apple' | 'nexa'
+    location?: string
+    capabilities?: string[]
+  }) {
+    const response = await this.client.post('/surfaces', data)
+    return response.data
+  }
+
+  async updateSurface(id: string, data: Partial<any>) {
+    const response = await this.client.put(`/surfaces/${id}`, data)
+    return response.data
+  }
+
+  async deleteSurface(id: string) {
+    const response = await this.client.delete(`/surfaces/${id}`)
+    return response.data
+  }
 }
 
 export const api = new ApiClient()
