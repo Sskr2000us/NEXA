@@ -18,7 +18,7 @@ interface Surface {
 }
 
 export default function SurfacesPage() {
-  const [surfaces, setSurfaces] = [useState<Surface[]>([])
+  const [surfaces, setSurfaces] = useState<Surface[]>([])
   const [homes, setHomes] = useState<any[]>([])
   const [selectedHome, setSelectedHome] = useState<string>('')
   const [loading, setLoading] = useState(true)
