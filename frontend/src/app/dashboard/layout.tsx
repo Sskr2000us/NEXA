@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/store/auth'
 import { SocketProvider } from '@/contexts/SocketContext'
-import { Home, Zap, Settings, Activity, Bell, LogOut, Palette, BarChart3, Plug, Users, Menu, X } from 'lucide-react'
+import { Home, Zap, Settings, Activity, Bell, LogOut, Palette, BarChart3, Plug, Users, Menu, X, Brain } from 'lucide-react'
 
 export default function DashboardLayout({
   children,
@@ -49,6 +49,7 @@ export default function DashboardLayout({
     { name: 'Devices', href: '/dashboard/devices', icon: Zap },
     { name: 'Scenes', href: '/dashboard/scenes', icon: Palette },
     { name: 'Automations', href: '/dashboard/automations', icon: Settings },
+    { name: 'Predictive AI', href: '/dashboard/predictive', icon: Brain },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
     { name: 'Energy', href: '/dashboard/energy', icon: Activity },
     { name: 'Integrations', href: '/dashboard/integrations', icon: Plug },
