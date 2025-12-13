@@ -11,22 +11,50 @@ export class HomesService {
   async findAll(userId: string) {
     const client = this.supabaseService.getServiceClient();
 
-    // Get homes where user is owner or member
-    const { data, error } = await client
-      .from('homes')
-      .select(`
-        *,
-        home_members!inner(user_id, role, permissions)
-      `)
-      .or(`owner_id.eq.${userId},home_members.user_id.eq.${userId}`)
-      .eq('is_active', true);
+    // Get homes where user is owner OR member
+    // Use two separate queries and merge results to avoid complex OR with joins
+    const [ownedHomes, memberHomes] = await Promise.all([
+      // Homes where user is owner
+      client
+        .from('homes')
+        .select(`
+          *,
+          home_members(user_id, role, permissions)
+        `)
+        .eq('owner_id', userId)
+        .eq('is_active', true),
+      
+      // Homes where user is a member
+      client
+        .from('homes')
+        .select(`
+          *,
+          home_members!inner(user_id, role, permissions)
+        `)
+        .eq('home_members.user_id', userId)
+        .eq('is_active', true)
+    ]);
 
-    if (error) {
-      this.logger.error(`Find all homes error: ${error.message}`);
-      throw error;
+    if (ownedHomes.error) {
+      this.logger.error(`Find owned homes error: ${ownedHomes.error.message}`);
+      throw ownedHomes.error;
     }
 
-    return data;
+    if (memberHomes.error) {
+      this.logger.error(`Find member homes error: ${memberHomes.error.message}`);
+      throw memberHomes.error;
+    }
+
+    // Merge and deduplicate results by home id
+    const allHomes = [...(ownedHomes.data || []), ...(memberHomes.data || [])];
+    const uniqueHomes = allHomes.reduce((acc, home) => {
+      if (!acc.find(h => h.id === home.id)) {
+        acc.push(home);
+      }
+      return acc;
+    }, []);
+
+    return uniqueHomes;
   }
 
   async findOne(homeId: string, userId: string) {
