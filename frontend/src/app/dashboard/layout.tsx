@@ -166,9 +166,9 @@ export default function DashboardLayout({
             <div className="flex items-center gap-4">
               <Link
                 href="/dashboard/settings"
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors border border-gray-300"
               >
-                <Settings className="w-4 h-4" />
+                <Settings className="w-4 h-4 text-gray-700" />
                 <span>Settings</span>
               </Link>
               <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
