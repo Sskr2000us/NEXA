@@ -6,12 +6,11 @@ export class SignUpDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'SecurePass123!' })
+  @ApiProperty({ example: 'pass123' })
   @IsString()
-  @MinLength(8)
   password: string;
 
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: 'John Doe', required: false })
   @IsString()
   @IsOptional()
   fullName?: string;
