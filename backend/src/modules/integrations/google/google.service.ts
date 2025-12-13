@@ -21,7 +21,8 @@ export class GoogleIntegrationService {
 
   getAuthUrl(userId: string): string {
     const scopes = [
-      'https://www.googleapis.com/auth/homegraph',
+      'https://www.googleapis.com/auth/sdm.service',
+      'https://www.googleapis.com/auth/pubsub',
     ];
 
     return this.oauth2Client.generateAuthUrl({
