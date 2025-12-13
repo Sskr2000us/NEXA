@@ -68,7 +68,6 @@ export default function DashboardLayout({
       <div className="min-h-screen bg-gray-50">
         {/* Mobile Header */}
         <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-40">
-          <h1 className="text-xl font-bold text-primary-600">NEXA</h1>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -79,6 +78,14 @@ export default function DashboardLayout({
               <Menu className="w-6 h-6 text-gray-600" />
             )}
           </button>
+          <h1 className="text-xl font-bold text-primary-600">NEXA</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+              <span className="text-primary-600 font-semibold text-sm">
+                {user?.fullName?.split(' ').map(n => n[0]).join('') || user?.email?.[0].toUpperCase()}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Menu Overlay */}
@@ -97,7 +104,7 @@ export default function DashboardLayout({
         >
           <div className="flex flex-col h-full">
             {/* Logo */}
-            <div className="flex items-center h-16 px-6 border-b border-gray-200">
+            <div className="hidden lg:flex items-center h-16 px-6 border-b border-gray-200">
               <h1 className="text-2xl font-bold text-primary-600">NEXA</h1>
             </div>
 
@@ -157,8 +164,36 @@ export default function DashboardLayout({
           </div>
         </div>
 
+        {/* Desktop Header */}
+        <div className="hidden lg:block fixed top-0 left-64 right-0 h-16 bg-white border-b border-gray-200 z-30">
+          <div className="h-full px-6 flex items-center justify-end">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => setIsMobileMenuOpen(true)}>
+                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+                  <span className="text-primary-600 font-semibold">
+                    {user?.fullName?.split(' ').map(n => n[0]).join('') || user?.email?.[0].toUpperCase()}
+                  </span>
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-medium text-gray-900">
+                    {user?.fullName || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-500">{user?.email}</p>
+                </div>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Main content */}
-        <div className="lg:pl-64 pt-16 lg:pt-0">
+        <div className="lg:pl-64 pt-16 lg:pt-16">
           <main className="p-4 md:p-8">{children}</main>
         </div>
       </div>
