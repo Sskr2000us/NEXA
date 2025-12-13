@@ -67,30 +67,60 @@ export default function DashboardLayout({
   return (
     <SocketProvider>
       <div className="h-screen flex flex-col overflow-hidden min-h-0 bg-gray-50">
-        {/* Mobile Header */}
-        <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-40">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-gray-600" />
-            ) : (
-              <Menu className="w-6 h-6 text-gray-600" />
-            )}
-          </button>
-          <h1 className="text-xl font-bold text-primary-600">NEXA</h1>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/dashboard/settings"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <Settings className="w-5 h-5 text-gray-700" />
-            </Link>
-            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
-              <span className="text-primary-600 font-semibold text-sm">
-                {user?.fullName?.split(' ').map(n => n[0]).join('') || user?.email?.[0].toUpperCase()}
-              </span>
+        {/* Universal Header - Always Visible on All Devices */}
+        <div className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 shadow-sm">
+          <div className="h-full px-4 lg:px-6 flex items-center justify-between">
+            {/* Left: Mobile menu + Logo */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6 text-gray-600" />
+                ) : (
+                  <Menu className="w-6 h-6 text-gray-600" />
+                )}
+              </button>
+              <h1 className="text-xl lg:text-2xl font-bold text-primary-600 lg:pl-60">NEXA</h1>
+            </div>
+            
+            {/* Right: Settings + User + Logout */}
+            <div className="flex items-center gap-2 lg:gap-4">
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center gap-2 px-3 lg:px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
+                title="Settings"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="hidden sm:inline">Settings</span>
+              </Link>
+              <div className="hidden lg:flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
+                  <span className="text-primary-600 font-semibold">
+                    {user?.fullName?.split(' ').map(n => n[0]).join('') || user?.email?.[0].toUpperCase()}
+                  </span>
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-medium text-gray-900">
+                    {user?.fullName || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-500">{user?.email}</p>
+                </div>
+              </div>
+              <div className="lg:hidden w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                <span className="text-primary-600 font-semibold text-sm">
+                  {user?.fullName?.split(' ').map(n => n[0]).join('') || user?.email?.[0].toUpperCase()}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-3 lg:px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                title="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
             </div>
           </div>
         </div>
@@ -161,44 +191,6 @@ export default function DashboardLayout({
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Desktop Header */}
-        <div className="hidden lg:block fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 shadow-sm">
-          <div className="h-full px-6 flex items-center justify-between">
-            <div className="flex items-center gap-4 pl-64">
-              <h1 className="text-2xl font-bold text-primary-600">NEXA</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard/settings"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors border border-gray-300"
-              >
-                <Settings className="w-4 h-4 text-gray-700" />
-                <span>Settings</span>
-              </Link>
-              <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
-                  <span className="text-primary-600 font-semibold">
-                    {user?.fullName?.split(' ').map(n => n[0]).join('') || user?.email?.[0].toUpperCase()}
-                  </span>
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.fullName || 'User'}
-                  </p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>Logout</span>
               </button>
             </div>
           </div>
