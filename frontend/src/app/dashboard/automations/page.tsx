@@ -73,7 +73,7 @@ export default function AutomationsPage() {
         toast.success('Automation created')
       }
       setShowBuilder(false)
-      setEditin onClick={() => openBuilder()}gAutomation(null)
+      setEditingAutomation(null)
       loadAutomations(selectedHome)
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to save automation')
@@ -260,3 +260,4 @@ export default function AutomationsPage() {
     </div>
   )
 }
+
