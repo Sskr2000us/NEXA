@@ -87,14 +87,14 @@ export default function DashboardLayout({
             
             {/* Right: Settings + User + Logout */}
             <div className="flex items-center gap-2 lg:gap-4">
-              <Link
-                href="/dashboard/settings"
-                className="flex items-center gap-2 px-3 lg:px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors"
-                title="Settings"
+              <button
+                onClick={() => router.push('/dashboard/settings')}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-lg"
+                style={{ minWidth: '120px' }}
               >
-                <Settings className="w-4 h-4" />
-                <span className="hidden sm:inline">Settings</span>
-              </Link>
+                <Settings className="w-5 h-5" />
+                <span>SETTINGS</span>
+              </button>
               <div className="hidden lg:flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
                   <span className="text-primary-600 font-semibold">
