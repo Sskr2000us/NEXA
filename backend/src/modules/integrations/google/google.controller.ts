@@ -11,7 +11,10 @@ import { JwtService } from '@nestjs/jwt';
 export class GoogleIntegrationController {
   constructor(
     private readonly googleService: GoogleIntegrationService,
-   Public()
+    private readonly jwtService: JwtService,
+  ) {}
+
+  @Public()
   @Get('auth')
   @ApiOperation({ summary: 'Initiate Google OAuth flow' })
   async initiateOAuth(
@@ -32,10 +35,7 @@ export class GoogleIntegrationController {
     } catch (error) {
       console.error('Token verification error:', error);
       return res.status(401).json({ message: 'Invalid or expired token' });
-    }1).json({ message: 'Unauthorized' });
     }
-    const authUrl = this.googleService.getAuthUrl(userId);
-    res.redirect(authUrl);
   }
 
   @Public()
@@ -87,3 +87,4 @@ export class GoogleIntegrationController {
     return this.googleService.handleSmartHomeIntent(body);
   }
 }
+
