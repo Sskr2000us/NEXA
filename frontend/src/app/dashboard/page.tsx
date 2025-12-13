@@ -5,6 +5,8 @@ import { api } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Home, Zap, Activity, Bell, Plus } from 'lucide-react'
+import AddHomeModal from '@/components/AddHomeModal'
+import toast from 'react-hot-toast'
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({
@@ -15,6 +17,7 @@ export default function DashboardPage() {
   })
   const [homes, setHomes] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
     loadDashboardData()
@@ -53,6 +56,17 @@ export default function DashboardPage() {
     }
   }
 
+  const handleAddHome = async (homeData: any) => {
+    try {
+      await api.createHome(homeData)
+      toast.success('Home created successfully!')
+      await loadDashboardData()
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to create home')
+      throw error
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -63,6 +77,12 @@ export default function DashboardPage() {
 
   return (
     <div>
+      <AddHomeModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onAdd={handleAddHome}
+      />
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-600 mt-2">Welcome to your smart home control center</p>
@@ -123,7 +143,7 @@ export default function DashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Your Homes</CardTitle>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setShowAddModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Home
           </Button>
@@ -138,7 +158,7 @@ export default function DashboardPage() {
               <p className="text-gray-600 mb-4">
                 Get started by adding your first home
               </p>
-              <Button>
+              <Button onClick={() => setShowAddModal(true)}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Home
               </Button>
