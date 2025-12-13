@@ -17,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new Error('SUPABASE_URL is not configured');
     }
 
-    const client = jwksClient.default({
+    const client = jwksClient({
       jwksUri: `${supabaseUrl}/auth/v1/.well-known/jwks.json`,
       cache: true,
       cacheMaxAge: 86400000, // 24 hours
