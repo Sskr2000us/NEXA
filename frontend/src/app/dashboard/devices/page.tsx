@@ -43,6 +43,10 @@ export default function DevicesPage() {
   }
 
   const loadDevices = async (hId: string) => {
+    if (!hId) {
+      console.log('No home ID provided, skipping device load')
+      return
+    }
     try {
       const devicesData = await api.getDevices(hId)
       setDevices(devicesData)
@@ -93,7 +97,7 @@ export default function DevicesPage() {
           <h1 className="text-3xl font-bold text-gray-900">Devices</h1>
           <p className="text-gray-600 mt-2">Manage and control your smart home devices</p>
         </div>
-        {homes.length > 0 && (
+        {homes.length > 0 && selectedHome && (
           <Button onClick={() => setShowAddModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Device
@@ -119,12 +123,14 @@ export default function DevicesPage() {
       ) : (
         <>
           {/* Add Device Modal */}
-          <AddDeviceModal
-            isOpen={showAddModal}
-            onClose={() => setShowAddModal(false)}
-            onAdd={handleAddDevice}
-            homeId={selectedHome}
-          />
+          {selectedHome && (
+            <AddDeviceModal
+              isOpen={showAddModal}
+              onClose={() => setShowAddModal(false)}
+              onAdd={handleAddDevice}
+              homeId={selectedHome}
+            />
+          )}
 
           {/* Home Selector */}
           {homes.length > 1 && (
