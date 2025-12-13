@@ -8,18 +8,6 @@ export class AppController {
   private readonly logger = new Logger(AppController.name);
 
   @Public()
-  @Get()
-  @ApiOperation({ summary: 'Get API information' })
-  getInfo() {
-    return {
-      message: 'NEXA Smart Home API',
-      version: '1.0.0',
-      documentation: '/api/docs',
-      health: '/health',
-    };
-  }
-
-  @Public()
   @Get('health')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Health check endpoint' })

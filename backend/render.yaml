@@ -9,7 +9,7 @@ services:
     branch: main
     buildCommand: npm install && npm run build
     startCommand: npm run start:prod
-    healthCheckPath: /health
+    healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
         value: production
