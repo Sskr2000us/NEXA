@@ -22,13 +22,13 @@ CREATE UNIQUE INDEX idx_surfaces_provider_external_id ON public.surfaces(provide
 -- Enable RLS
 ALTER TABLE public.surfaces ENABLE ROW LEVEL SECURITY;
 
--- RLS policies - users can only see surfaces for homes they belong to
+-- RLS policies - users can only see surfaces for homes they own
 CREATE POLICY "Users can view surfaces in their homes"
   ON public.surfaces
   FOR SELECT
   USING (
     home_id IN (
-      SELECT home_id FROM public.user_homes WHERE user_id = auth.uid()
+      SELECT id FROM public.homes WHERE owner_id = auth.uid()
     )
   );
 
@@ -37,7 +37,6 @@ CREATE POLICY "Home owners can manage surfaces"
   FOR ALL
   USING (
     home_id IN (
-      SELECT home_id FROM public.user_homes 
-      WHERE user_id = auth.uid() AND role IN ('owner', 'admin')
+      SELECT id FROM public.homes WHERE owner_id = auth.uid()
     )
   );
