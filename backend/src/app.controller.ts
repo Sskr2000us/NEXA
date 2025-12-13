@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Public } from './common/decorators/public.decorator';
 
@@ -19,6 +19,7 @@ export class AppController {
 
   @Public()
   @Get('health')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Health check endpoint' })
   health() {
     return {
