@@ -32,17 +32,24 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       audience: 'authenticated',
       algorithms: ['ES256'],
       secretOrKeyProvider: (request, rawJwtToken, done) => {
-        const decoded = JSON.parse(
-          Buffer.from(rawJwtToken.split('.')[0], 'base64url').toString(),
-        );
-        
-        client.getSigningKey(decoded.kid, (err, key) => {
-          if (err || !key) {
-            return done(err || new Error('Unable to find signing key'), null);
-          }
-          const signingKey = key.getPublicKey();
-          done(null, signingKey);
-        });
+        try {
+          // Decode JWT header (base64 URL encoded)
+          const headerB64 = rawJwtToken.split('.')[0];
+          const headerB64Padded = headerB64.replace(/-/g, '+').replace(/_/g, '/');
+          const decoded = JSON.parse(
+            Buffer.from(headerB64Padded, 'base64').toString(),
+          );
+          
+          client.getSigningKey(decoded.kid, (err, key) => {
+            if (err || !key) {
+              return done(err || new Error('Unable to find signing key'), null);
+            }
+            const signingKey = key.getPublicKey();
+            done(null, signingKey);
+          });
+        } catch (error) {
+          done(error as Error, null);
+        }
       },
     });
   }
