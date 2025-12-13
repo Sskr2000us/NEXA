@@ -10,11 +10,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private configService: ConfigService,
     private authService: AuthService,
   ) {
+    const supabaseUrl = configService.get('SUPABASE_URL');
+    const jwtSecret = configService.get('JWT_SECRET');
+    
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET is not configured');
+    }
+    
+    if (!supabaseUrl) {
+      throw new Error('SUPABASE_URL is not configured');
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_SECRET'),
-      issuer: configService.get('SUPABASE_URL'),
+      secretOrKey: jwtSecret,
+      issuer: `${supabaseUrl}/auth/v1`,
+      audience: 'authenticated',
     });
   }
 
