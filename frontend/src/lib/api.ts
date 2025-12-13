@@ -160,6 +160,22 @@ class ApiClient {
     const response = await this.client.patch(`/alerts/${id}/resolve`)
     return response.data
   }
+
+  // Google Integration methods
+  async getGoogleIntegrationStatus() {
+    const response = await this.client.get('/integrations/google/status')
+    return response.data
+  }
+
+  async syncGoogleDevices() {
+    const response = await this.client.post('/integrations/google/sync')
+    return response.data
+  }
+
+  async disconnectGoogleIntegration() {
+    const response = await this.client.post('/integrations/google/disconnect')
+    return response.data
+  }
 }
 
 export const api = new ApiClient()
