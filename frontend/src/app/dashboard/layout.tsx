@@ -167,8 +167,11 @@ export default function DashboardLayout({
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden lg:block fixed top-0 left-64 right-0 h-16 bg-white border-b border-gray-200 z-50 shadow-sm">
-          <div className="h-full px-6 flex items-center justify-end">
+        <div className="hidden lg:block fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 shadow-sm">
+          <div className="h-full px-6 flex items-center justify-between">
+            <div className="flex items-center gap-4 pl-64">
+              <h1 className="text-2xl font-bold text-primary-600">NEXA</h1>
+            </div>
             <div className="flex items-center gap-4">
               <Link
                 href="/dashboard/settings"
