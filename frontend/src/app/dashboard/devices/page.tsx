@@ -93,39 +93,58 @@ export default function DevicesPage() {
           <h1 className="text-3xl font-bold text-gray-900">Devices</h1>
           <p className="text-gray-600 mt-2">Manage and control your smart home devices</p>
         </div>
-        <Button onClick={() => setShowAddModal(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add Device
-        </Button>
+        {homes.length > 0 && (
+          <Button onClick={() => setShowAddModal(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Device
+          </Button>
+        )}
       </div>
 
-      {/* Add Device Modal */}
-      <AddDeviceModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAdd={handleAddDevice}
-        homeId={selectedHome}
-      />
+      {/* No Homes - Show Create Home First */}
+      {homes.length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Create a home first
+            </h3>
+            <p className="text-gray-600 mb-4">
+              You need to create a home before adding devices
+            </p>
+            <Button onClick={() => window.location.href = '/dashboard'}>
+              Go to Dashboard to Create Home
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Add Device Modal */}
+          <AddDeviceModal
+            isOpen={showAddModal}
+            onClose={() => setShowAddModal(false)}
+            onAdd={handleAddDevice}
+            homeId={selectedHome}
+          />
 
-      {/* Home Selector */}
-      {homes.length > 1 && (
-        <div className="mb-6">
-          <select
-            value={selectedHome}
-            onChange={(e) => setSelectedHome(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-          >
-            {homes.map((home) => (
-              <option key={home.id} value={home.id}>
-                {home.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+          {/* Home Selector */}
+          {homes.length > 1 && (
+            <div className="mb-6">
+              <select
+                value={selectedHome}
+                onChange={(e) => setSelectedHome(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                {homes.map((home) => (
+                  <option key={home.id} value={home.id}>
+                    {home.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-      {/* Devices Grid */}
-      {devices.length === 0 ? (
+          {/* Devices Grid */}
+          {devices.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
             <Zap className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -211,6 +230,5 @@ export default function DevicesPage() {
           })}
         </div>
       )}
-    </div>
-  )
-}
+        </>
+      )}
