@@ -37,8 +37,7 @@ export class HomesService {
       .select(`
         *,
         home_members(id, user_id, role, permissions, is_active),
-        rooms(id, name, room_type, floor_level),
-        devices:devices_count:devices(count)
+        rooms(id, name, room_type, floor_level)
       `)
       .eq('id', homeId)
       .single();
@@ -50,8 +49,8 @@ export class HomesService {
 
     // Check if user has access
     const hasAccess =
-      data.owner_id === userId ||
-      data.home_members.some((m) => m.user_id === userId && m.is_active);
+      (data as any).owner_id === userId ||
+      (data as any).home_members?.some((m: any) => m.user_id === userId && m.is_active);
 
     if (!hasAccess) {
       throw new NotFoundException('Home not found');
@@ -148,7 +147,7 @@ export class HomesService {
   async inviteMember(homeId: string, email: string, role: string, userId: string) {
     // Verify home access and ownership
     const home = await this.findOne(homeId, userId);
-    if (home.owner_id !== userId) {
+    if ((home as any).owner_id !== userId) {
       throw new NotFoundException('Only home owner can invite members');
     }
 
