@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get, UseGuards, Headers } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Headers, Patch } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { SignUpDto, SignInDto, RefreshTokenDto } from './dto/auth.dto';
+import { SignUpDto, SignInDto, RefreshTokenDto, UpdateProfileDto } from './dto/auth.dto';
 import { Public } from '../../common/decorators/public.decorator';
 import { GetCurrentUser, CurrentUser } from '../../common/decorators/current-user.decorator';
 
@@ -44,5 +44,15 @@ export class AuthController {
   @ApiOperation({ summary: 'Get current user profile' })
   async getCurrentUser(@GetCurrentUser() user: CurrentUser) {
     return this.authService.getCurrentUser(user.id);
+  }
+
+  @Patch('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile' })
+  async updateProfile(
+    @GetCurrentUser() user: CurrentUser,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    return this.authService.updateProfile(user.id, updateProfileDto);
   }
 }

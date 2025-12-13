@@ -142,6 +142,35 @@ export class AuthService {
     return data;
   }
 
+  async updateProfile(userId: string, updateData: any) {
+    const client = this.supabaseService.getServiceClient();
+
+    const updatePayload: any = {};
+    if (updateData.full_name !== undefined) {
+      updatePayload.full_name = updateData.full_name;
+    }
+    if (updateData.phone !== undefined) {
+      updatePayload.phone = updateData.phone;
+    }
+    if (updateData.timezone !== undefined) {
+      updatePayload.timezone = updateData.timezone;
+    }
+
+    const { data, error } = await client
+      .from('users')
+      .update(updatePayload)
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      this.logger.error(`Update profile error: ${error.message}`);
+      throw new Error('Failed to update profile');
+    }
+
+    return data;
+  }
+
   async validateUser(payload: any): Promise<any> {
     return {
       id: payload.sub,
