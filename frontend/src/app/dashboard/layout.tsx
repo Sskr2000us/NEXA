@@ -169,7 +169,14 @@ export default function DashboardLayout({
         <div className="hidden lg:block fixed top-0 left-64 right-0 h-16 bg-white border-b border-gray-200 z-30">
           <div className="h-full px-6 flex items-center justify-end">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => setIsMobileMenuOpen(true)}>
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <Settings className="w-4 h-4" />
+                <span>Settings</span>
+              </Link>
+              <div className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
                   <span className="text-primary-600 font-semibold">
                     {user?.fullName?.split(' ').map(n => n[0]).join('') || user?.email?.[0].toUpperCase()}
