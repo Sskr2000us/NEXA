@@ -496,6 +496,12 @@ export default function SettingsPage() {
                               <span className="font-medium">{googleStatus.deviceCount}</span>
                             </div>
                           )}
+                          {googleStatus?.surfaceCount !== undefined && googleStatus.surfaceCount > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Surfaces (Displays/Speakers)</span>
+                              <span className="font-medium">{googleStatus.surfaceCount}</span>
+                            </div>
+                          )}
                         </div>
 
                         <div className="flex space-x-3">
