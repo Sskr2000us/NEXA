@@ -14,10 +14,16 @@ export class GoogleIntegrationController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Initiate Google OAuth flow' })
   async initiateOAuth(
+    @Query('token') token: string,
     @GetCurrentUser() user: CurrentUser,
     @Res() res: Response,
   ) {
-    const authUrl = this.googleService.getAuthUrl(user.id);
+    // Use user from decorator if available, otherwise this is a redirect and user should be authenticated
+    const userId = user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    const authUrl = this.googleService.getAuthUrl(userId);
     res.redirect(authUrl);
   }
 

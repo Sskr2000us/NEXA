@@ -61,6 +61,7 @@ export default function DashboardLayout({
     { name: 'OEM Partners', href: '/dashboard/partners', icon: Building2 },
     { name: 'Integrations', href: '/dashboard/integrations', icon: Plug },
     { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
+    { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ]
 
   return (

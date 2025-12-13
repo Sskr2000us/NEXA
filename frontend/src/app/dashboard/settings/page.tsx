@@ -82,7 +82,8 @@ export default function SettingsPage() {
   }
 
   const handleConnectGoogle = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/integrations/google/auth`
+    const token = localStorage.getItem('accessToken')
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/integrations/google/auth?token=${token}`
   }
 
   const handleDisconnectGoogle = async () => {
