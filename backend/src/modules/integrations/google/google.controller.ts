@@ -4,14 +4,14 @@ import { Response } from 'express';
 import { GoogleIntegrationService } from './google.service';
 import { Public } from '../../../common/decorators/public.decorator';
 import { GetCurrentUser, CurrentUser } from '../../../common/decorators/current-user.decorator';
-import { JwtService } from '@nestjs/jwt';
+import { SupabaseService } from '../../../common/supabase/supabase.service';
 
 @ApiTags('integrations')
 @Controller('integrations/google')
 export class GoogleIntegrationController {
   constructor(
     private readonly googleService: GoogleIntegrationService,
-    private readonly jwtService: JwtService,
+    private readonly supabaseService: SupabaseService,
   ) {}
 
   @Public()
@@ -22,15 +22,16 @@ export class GoogleIntegrationController {
     @Res() res: Response,
   ) {
     try {
-      // Verify the JWT token from query parameter
-      const decoded = this.jwtService.verify(token);
-      const userId = decoded.sub;
+      // Verify the Supabase JWT token
+      const client = this.supabaseService.getClientWithToken(token);
+      const { data: { user }, error } = await client.auth.getUser();
       
-      if (!userId) {
-        return res.status(401).json({ message: 'Invalid token' });
+      if (error || !user) {
+        console.error('Token verification error:', error);
+        return res.status(401).json({ message: 'Invalid or expired token' });
       }
       
-      const authUrl = this.googleService.getAuthUrl(userId);
+      const authUrl = this.googleService.getAuthUrl(user.id);
       res.redirect(authUrl);
     } catch (error) {
       console.error('Token verification error:', error);
