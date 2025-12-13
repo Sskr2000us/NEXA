@@ -82,7 +82,7 @@ export default function DashboardLayout({
                   <Menu className="w-6 h-6 text-gray-600" />
                 )}
               </button>
-              <h1 className="text-xl lg:text-2xl font-bold text-primary-600 lg:pl-60">NEXA</h1>
+              <h1 className="text-xl lg:text-2xl font-bold text-primary-600">NEXA</h1>
             </div>
             
             {/* Right: Settings + User + Logout */}
