@@ -15,6 +15,7 @@ import { InsightsModule } from './modules/insights/insights.module';
 import { TelemetryModule } from './modules/telemetry/telemetry.module';
 import { RealtimeModule } from './modules/realtime/realtime.module';
 import { AppController } from './app.controller';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -46,7 +47,7 @@ import { AppController } from './app.controller';
     TelemetryModule,
     RealtimeModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [
     {
       provide: APP_GUARD,
