@@ -42,15 +42,20 @@ export class GoogleIntegrationService {
       const client = this.supabaseService.getServiceClient();
       const { error } = await client
         .from('user_integrations')
-        .upsert({
-          user_id: userId,
-          platform: 'google',
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token,
-          token_expiry: new Date(tokens.expiry_date),
-          is_active: true,
-          last_synced_at: new Date(),
-        });
+        .upsert(
+          {
+            user_id: userId,
+            platform: 'google',
+            access_token: tokens.access_token,
+            refresh_token: tokens.refresh_token,
+            token_expiry: new Date(tokens.expiry_date),
+            is_active: true,
+            last_synced_at: new Date(),
+          },
+          {
+            onConflict: 'user_id,platform',
+          }
+        );
 
       if (error) {
         this.logger.error(`Failed to save Google tokens: ${error.message}`);
