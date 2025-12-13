@@ -1,27 +1,38 @@
-import { Controller, Get, Post, Body, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Response } from 'express';
 import { GoogleIntegrationService } from './google.service';
 import { Public } from '../../../common/decorators/public.decorator';
 import { GetCurrentUser, CurrentUser } from '../../../common/decorators/current-user.decorator';
+import { JwtService } from '@nestjs/jwt';
 
 @ApiTags('integrations')
 @Controller('integrations/google')
 export class GoogleIntegrationController {
-  constructor(private readonly googleService: GoogleIntegrationService) {}
-
+  constructor(
+    private readonly googleService: GoogleIntegrationService,
+   Public()
   @Get('auth')
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Initiate Google OAuth flow' })
   async initiateOAuth(
     @Query('token') token: string,
-    @GetCurrentUser() user: CurrentUser,
     @Res() res: Response,
   ) {
-    // Use user from decorator if available, otherwise this is a redirect and user should be authenticated
-    const userId = user?.id;
-    if (!userId) {
-      return res.status(401).json({ message: 'Unauthorized' });
+    try {
+      // Verify the JWT token from query parameter
+      const decoded = this.jwtService.verify(token);
+      const userId = decoded.sub;
+      
+      if (!userId) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+      
+      const authUrl = this.googleService.getAuthUrl(userId);
+      res.redirect(authUrl);
+    } catch (error) {
+      console.error('Token verification error:', error);
+      return res.status(401).json({ message: 'Invalid or expired token' });
+    }1).json({ message: 'Unauthorized' });
     }
     const authUrl = this.googleService.getAuthUrl(userId);
     res.redirect(authUrl);
