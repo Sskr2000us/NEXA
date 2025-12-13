@@ -126,7 +126,7 @@ export class HomesService {
     const home = await this.findOne(homeId, userId);
 
     // Only owner can delete
-    if (home.owner_id !== userId) {
+    if ((home as any).owner_id !== userId) {
       throw new NotFoundException('Only home owner can delete');
     }
 

@@ -30,7 +30,6 @@ export class DiagnosticsService {
 
     try {
       // Perform diagnostics (simplified - real implementation would run actual diagnostics)
-      const issues = [];
       const metrics = {
         connectivity: 'good',
         responseTime: 150,
@@ -39,6 +38,7 @@ export class DiagnosticsService {
       };
 
       // Check for issues
+      const issues: any[] = [];
       if (metrics.responseTime > 200) {
         issues.push({
           diagnostic_run_id: diagnosticRun.id,

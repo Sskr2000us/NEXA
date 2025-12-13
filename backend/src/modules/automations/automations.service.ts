@@ -128,7 +128,7 @@ export class AutomationsService {
 
     try {
       // Execute automation actions (simplified - real implementation would execute device commands)
-      const results = [];
+      const results: any[] = [];
       for (const action of automation.actions as any[]) {
         results.push({
           action: action.type,

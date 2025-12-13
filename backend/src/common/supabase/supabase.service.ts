@@ -52,6 +52,10 @@ export class SupabaseService {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
     const supabaseAnonKey = this.configService.get<string>('SUPABASE_ANON_KEY');
 
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('SUPABASE_URL and SUPABASE_ANON_KEY must be defined');
+    }
+
     return createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: {

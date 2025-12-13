@@ -48,13 +48,13 @@ export class AuthService {
 
     return {
       user: {
-        id: data.user.id,
-        email: data.user.email,
+        id: data.user!.id,
+        email: data.user!.email!,
         fullName: signUpDto.fullName,
       },
-      session: data.session,
-      accessToken: data.session?.access_token,
-      refreshToken: data.session?.refresh_token,
+      session: data.session!,
+      accessToken: data.session!.access_token,
+      refreshToken: data.session!.refresh_token,
     };
   }
 
@@ -75,17 +75,17 @@ export class AuthService {
     await client
       .from('users')
       .update({ last_login_at: new Date().toISOString() })
-      .eq('id', data.user.id);
+      .eq('id', data.user!.id);
 
     return {
       user: {
-        id: data.user.id,
-        email: data.user.email,
-        fullName: data.user.user_metadata?.full_name,
+        id: data.user!.id,
+        email: data.user!.email!,
+        fullName: data.user!.user_metadata?.full_name,
       },
-      session: data.session,
-      accessToken: data.session.access_token,
-      refreshToken: data.session.refresh_token,
+      session: data.session!,
+      accessToken: data.session!.access_token,
+      refreshToken: data.session!.refresh_token,
     };
   }
 
@@ -113,13 +113,13 @@ export class AuthService {
 
     return {
       user: {
-        id: data.user.id,
-        email: data.user.email,
-        fullName: data.user.user_metadata?.full_name,
+        id: data.user!.id,
+        email: data.user!.email!,
+        fullName: data.user!.user_metadata?.full_name,
       },
-      session: data.session,
-      accessToken: data.session.access_token,
-      refreshToken: data.session.refresh_token,
+      session: data.session!,
+      accessToken: data.session!.access_token,
+      refreshToken: data.session!.refresh_token,
     };
   }
 

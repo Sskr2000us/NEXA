@@ -94,7 +94,7 @@ export class EnergyService {
     }
 
     // Aggregate by device
-    const deviceTotals = data.reduce((acc, record) => {
+    const deviceTotals = data.reduce((acc, record: any) => {
       const deviceId = record.device_id;
       if (!acc[deviceId]) {
         acc[deviceId] = {
