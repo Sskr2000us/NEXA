@@ -371,6 +371,15 @@ export class GoogleIntegrationService {
 
       const allDevices = response.data.devices || [];
       
+      this.logger.log(`Fetched ${allDevices.length} devices from Google SDM API`);
+      
+      // Log device types for debugging
+      if (allDevices.length > 0) {
+        allDevices.forEach((device: any) => {
+          this.logger.log(`Device: ${device.name}, Type: ${device.type}`);
+        });
+      }
+      
       // Surface types (displays, speakers) - client interfaces
       const surfaceTypes = [
         'sdm.devices.types.DISPLAY',
@@ -391,6 +400,7 @@ export class GoogleIntegrationService {
 
         if (surfaceTypes.includes(deviceType)) {
           // This is a surface (smart display/speaker) - a client interface
+          this.logger.log(`Categorized as SURFACE: ${deviceName} (${deviceType})`);
           surfaces.push({
             id: deviceId,
             name: deviceName,
@@ -402,6 +412,7 @@ export class GoogleIntegrationService {
           });
         } else {
           // This is a controllable device (light, thermostat, etc.)
+          this.logger.log(`Categorized as DEVICE: ${deviceName} (${deviceType})`);
           devices.push({
             id: deviceId,
             name: deviceName,
@@ -412,9 +423,11 @@ export class GoogleIntegrationService {
         }
       }
 
+      this.logger.log(`Sync complete: ${devices.length} devices, ${surfaces.length} surfaces`);
       return { devices, surfaces };
     } catch (error) {
       this.logger.error(`Failed to fetch Google devices: ${error.message}`);
+      this.logger.error(`Error stack: ${error.stack}`);
       // Return empty arrays on error
       return { devices: [], surfaces: [] };
     }
