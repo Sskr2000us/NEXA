@@ -70,11 +70,15 @@ async function bootstrap() {
   const port = configService.get('PORT') || 3000;
   await app.listen(port, '0.0.0.0');
 
+  const baseUrl = configService.get('NODE_ENV') === 'production'
+    ? 'https://nexa-backend-r7dp.onrender.com'
+    : `http://localhost:${port}`;
+
   console.log(`
   🚀 NEXA Backend is running!
   
-  📍 API: http://localhost:${port}/${apiPrefix}
-  📚 Swagger Docs: http://localhost:${port}/api/docs
+  📍 API: ${baseUrl}/${apiPrefix}
+  📚 Swagger Docs: ${baseUrl}/api/docs
   🌍 Environment: ${configService.get('NODE_ENV')}
   `);
 }
