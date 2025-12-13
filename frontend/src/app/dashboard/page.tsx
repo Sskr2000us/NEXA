@@ -143,7 +143,13 @@ export default function DashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Your Homes</CardTitle>
-          <Button size="sm" onClick={() => setShowAddModal(true)}>
+          <Button 
+            size="sm" 
+            onClick={() => {
+              console.log('Add Home button clicked')
+              setShowAddModal(true)
+            }}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add Home
           </Button>
@@ -158,7 +164,12 @@ export default function DashboardPage() {
               <p className="text-gray-600 mb-4">
                 Get started by adding your first home
               </p>
-              <Button onClick={() => setShowAddModal(true)}>
+              <Button 
+                onClick={() => {
+                  console.log('Add Your First Home button clicked')
+                  setShowAddModal(true)
+                }}
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Your First Home
               </Button>

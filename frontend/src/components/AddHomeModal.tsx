@@ -20,6 +20,8 @@ export default function AddHomeModal({ isOpen, onClose, onAdd }: AddHomeModalPro
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
+  console.log('AddHomeModal render - isOpen:', isOpen)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
