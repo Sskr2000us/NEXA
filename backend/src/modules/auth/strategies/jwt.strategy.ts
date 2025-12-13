@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth.service';
 import * as jwksClient from 'jwks-rsa';
+import * as jose from 'node-jose';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -37,20 +38,28 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           rateLimit: true,
         });
 
-        strategyOptions.secretOrKeyProvider = (request, rawJwtToken, done) => {
-          const header = JSON.parse(
-            Buffer.from(rawJwtToken.split('.')[0], 'base64').toString(),
-          );
-          
-          client.getSigningKey(header.kid, (err, key) => {
-            if (err || !key) {
-              // Fallback to provided JWK
-              done(null, jwk);
-            } else {
-              const signingKey = key.getPublicKey();
-              done(null, signingKey);
-            }
-          });
+        strategyOptions.secretOrKeyProvider = async (request, rawJwtToken, done) => {
+          try {
+            const header = JSON.parse(
+              Buffer.from(rawJwtToken.split('.')[0], 'base64').toString(),
+            );
+            
+            // Try fetching from JWKS endpoint first
+            client.getSigningKey(header.kid, async (err, key) => {
+              if (!err && key) {
+                const signingKey = key.getPublicKey();
+                done(null, signingKey);
+              } else {
+                // Fallback: Convert provided JWK to PEM
+                const keyStore = await jose.JWK.asKeyStore({ keys: [jwk] });
+                const publicKey = keyStore.get(jwk.kid);
+                const pem = publicKey.toPEM(false);
+                done(null, pem);
+              }
+            });
+          } catch (error) {
+            done(error, null);
+          }
         };
       } catch (error) {
         throw new Error('Invalid JWT_JWK format');
