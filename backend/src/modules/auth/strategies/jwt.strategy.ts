@@ -43,7 +43,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           );
           
           client.getSigningKey(header.kid, (err, key) => {
-            if (err) {
+            if (err || !key) {
               // Fallback to provided JWK
               done(null, jwk);
             } else {
