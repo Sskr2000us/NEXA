@@ -5,7 +5,7 @@ import { Building2, Key, DollarSign, TrendingUp, Users, BarChart3, Code, Setting
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import api from '@/lib/api'
+import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 interface OEMPartner {

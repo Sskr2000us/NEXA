@@ -5,7 +5,7 @@ import { Shield, AlertTriangle, CheckCircle2, XCircle, Lock, Unlock, FileText, D
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { format } from 'date-fns'
-import api from '@/lib/api'
+import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 interface SecurityScan {

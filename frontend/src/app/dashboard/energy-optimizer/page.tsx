@@ -5,7 +5,7 @@ import { Zap, DollarSign, TrendingDown, TrendingUp, Leaf, Clock, Sun, Moon, Batt
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import api from '@/lib/api'
+import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
 import { format, subDays } from 'date-fns'
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { AlertTriangle, TrendingUp, TrendingDown, Activity, DollarSign, Wrench, Calendar, AlertCircle, CheckCircle2, Clock, Zap } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import api from '@/lib/api'
+import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 

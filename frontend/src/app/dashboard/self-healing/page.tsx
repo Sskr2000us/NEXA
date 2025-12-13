@@ -5,7 +5,7 @@ import { Wrench, CheckCircle2, AlertCircle, XCircle, Clock, TrendingUp, Zap, Ref
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
-import api from '@/lib/api'
+import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 
