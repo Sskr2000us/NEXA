@@ -7,7 +7,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://nexa-backend-r7dp.onrender.com/api/v1',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://nexa-backend-r7dp.onrender.com/api/v1/v1',
   },
   images: {
     domains: ['nexa-backend-r7dp.onrender.com'],
