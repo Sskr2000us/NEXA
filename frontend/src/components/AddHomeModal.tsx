@@ -13,10 +13,10 @@ interface AddHomeModalProps {
 
 export default function AddHomeModal({ isOpen, onClose, onAdd }: AddHomeModalProps) {
   const [name, setName] = useState('')
-  const [address, setAddress] = useState('')
-  const [city, setCity] = useState('')
-  const [state, setState] = useState('')
-  const [zipCode, setZipCode] = useState('')
+  const [addressLine1, setAddressLine1] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -35,18 +35,18 @@ export default function AddHomeModal({ isOpen, onClose, onAdd }: AddHomeModalPro
     try {
       await onAdd({
         name: name.trim(),
-        address: address.trim() || undefined,
+        address_line1: addressLine1.trim() || undefined,
         city: city.trim() || undefined,
         state: state.trim() || undefined,
-        zip_code: zipCode.trim() || undefined,
+        postal_code: postalCode.trim() || undefined,
       })
       
       // Reset form
       setName('')
-      setAddress('')
+      setAddressLine1('')
       setCity('')
       setState('')
-      setZipCode('')
+      setPostalCode('')
       onClose()
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create home')
@@ -89,8 +89,8 @@ export default function AddHomeModal({ isOpen, onClose, onAdd }: AddHomeModalPro
           <Input
             label="Address (Optional)"
             placeholder="123 Main Street"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            value={addressLine1}
+            onChange={(e) => setAddressLine1(e.target.value)}
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -112,8 +112,8 @@ export default function AddHomeModal({ isOpen, onClose, onAdd }: AddHomeModalPro
           <Input
             label="Zip Code (Optional)"
             placeholder="94102"
-            value={zipCode}
-            onChange={(e) => setZipCode(e.target.value)}
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
           />
 
           <div className="flex gap-3 pt-4">
