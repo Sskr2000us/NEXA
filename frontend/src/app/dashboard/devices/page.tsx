@@ -6,6 +6,7 @@ import { api } from '@/lib/api'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Zap, Power, Thermometer, Lightbulb, Lock, Plus } from 'lucide-react'
+import AddDeviceModal from '@/components/AddDeviceModal'
 
 export default function DevicesPage() {
   const searchParams = useSearchParams()
@@ -15,6 +16,7 @@ export default function DevicesPage() {
   const [homes, setHomes] = useState<any[]>([])
   const [selectedHome, setSelectedHome] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
     loadHomes()
@@ -58,6 +60,11 @@ export default function DevicesPage() {
     }
   }
 
+  const handleAddDevice = async (deviceData: any) => {
+    await api.createDevice(selectedHome, deviceData)
+    await loadDevices(selectedHome)
+  }
+
   const getDeviceIcon = (type: string) => {
     switch (type) {
       case 'light':
@@ -86,11 +93,19 @@ export default function DevicesPage() {
           <h1 className="text-3xl font-bold text-gray-900">Devices</h1>
           <p className="text-gray-600 mt-2">Manage and control your smart devices</p>
         </div>
-        <Button>
+        <Button onClick={() => setShowAddModal(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Add Device
         </Button>
       </div>
+
+      {/* Add Device Modal */}
+      <AddDeviceModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onAdd={handleAddDevice}
+        homeId={selectedHome}
+      />
 
       {/* Home Selector */}
       {homes.length > 1 && (
@@ -120,7 +135,7 @@ export default function DevicesPage() {
             <p className="text-gray-600 mb-4">
               Add your first device to get started
             </p>
-            <Button>
+            <Button onClick={() => setShowAddModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Add Device
             </Button>

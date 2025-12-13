@@ -108,6 +108,16 @@ class ApiClient {
     return response.data
   }
 
+  async createDevice(homeId: string, data: {
+    device_name: string
+    device_type: string
+    manufacturer_device_id?: string
+    room_id?: string
+  }) {
+    const response = await this.client.post(`/homes/${homeId}/devices`, data)
+    return response.data
+  }
+
   async controlDevice(id: string, command: string, parameters?: any) {
     const response = await this.client.post(`/devices/${id}/control`, {
       command,
