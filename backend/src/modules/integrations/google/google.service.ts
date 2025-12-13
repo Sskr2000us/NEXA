@@ -272,22 +272,60 @@ export class GoogleIntegrationService {
   }
 
   private async fetchGoogleDevices(accessToken: string): Promise<any[]> {
-    // In production, call Google Home Graph API
-    // For MVP, return placeholder data
-    return [
-      {
-        id: 'google-device-1',
-        name: 'Living Room Light',
-        type: 'action.devices.types.LIGHT',
-        traits: ['OnOff', 'Brightness'],
-      },
-      {
-        id: 'google-device-2',
-        name: 'Bedroom Thermostat',
-        type: 'action.devices.types.THERMOSTAT',
-        traits: ['TemperatureSetting'],
-      },
-    ];
+    try {
+      // Set credentials for Google API client
+      this.oauth2Client.setCredentials({
+        access_token: accessToken,
+      });
+
+      // Use Google Smart Device Management API
+      const smartdevicemanagement = google.smartdevicemanagement({
+        version: 'v1',
+        auth: this.oauth2Client,
+      });
+
+      // Get project ID from environment (you need to set this)
+      const projectId = this.configService.get('GOOGLE_DEVICE_ACCESS_PROJECT_ID');
+      
+      if (!projectId) {
+        this.logger.warn('GOOGLE_DEVICE_ACCESS_PROJECT_ID not configured, returning mock data');
+        // Return mock data if project not configured
+        return [
+          {
+            id: 'google-device-1',
+            name: 'Living Room Light',
+            type: 'action.devices.types.LIGHT',
+            traits: ['OnOff', 'Brightness'],
+          },
+          {
+            id: 'google-device-2',
+            name: 'Bedroom Thermostat',
+            type: 'action.devices.types.THERMOSTAT',
+            traits: ['TemperatureSetting'],
+          },
+        ];
+      }
+
+      // List all devices
+      const response = await smartdevicemanagement.enterprises.devices.list({
+        parent: `enterprises/${projectId}`,
+      });
+
+      const devices = response.data.devices || [];
+      
+      // Map SDM devices to our format
+      return devices.map((device: any) => ({
+        id: device.name,
+        name: device.traits['sdm.devices.traits.Info']?.customName || 'Unnamed Device',
+        type: device.type || 'action.devices.types.UNKNOWN',
+        traits: Object.keys(device.traits || {}),
+        room: device.parentRelations?.[0]?.displayName,
+      }));
+    } catch (error) {
+      this.logger.error(`Failed to fetch Google devices: ${error.message}`);
+      // Return empty array on error
+      return [];
+    }
   }
 
   private mapGoogleDeviceType(googleType: string): string {
