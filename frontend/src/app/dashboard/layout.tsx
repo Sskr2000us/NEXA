@@ -50,8 +50,9 @@ export default function DashboardLayout({
     { name: 'Scenes', href: '/dashboard/scenes', icon: Palette },
     { name: 'Automations', href: '/dashboard/automations', icon: Settings },
     { name: 'Predictive AI', href: '/dashboard/predictive', icon: Brain },
+    { name: 'Energy Optimizer', href: '/dashboard/energy-optimizer', icon: Activity },
+    { name: 'Self-Healing', href: '/dashboard/self-healing', icon: Settings },
     { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-    { name: 'Energy', href: '/dashboard/energy', icon: Activity },
     { name: 'Integrations', href: '/dashboard/integrations', icon: Plug },
     { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
   ]
