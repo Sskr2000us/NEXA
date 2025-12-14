@@ -61,7 +61,6 @@ export default function DashboardLayout({
     { name: 'OEM Partners', href: '/dashboard/partners', icon: Building2 },
     { name: 'Integrations', href: '/dashboard/integrations', icon: Plug },
     { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
-    { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ]
 
   return (
@@ -178,13 +177,6 @@ export default function DashboardLayout({
                   <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
               </div>
-              <button
-                onClick={() => window.location.href='/dashboard/settings'}
-                className="flex items-center w-full px-4 py-2 mb-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Settings
-              </button>
               <button
                 onClick={handleLogout}
                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"

@@ -145,6 +145,7 @@ export default function SurfacesPage() {
             onChange={(e) => setSelectedHome(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
+            <option value="">Select a home...</option>
             {homes.map((home) => (
               <option key={home.id} value={home.id}>
                 {home.home_name}
@@ -152,6 +153,10 @@ export default function SurfacesPage() {
             ))}
           </select>
         </div>
+      )}
+
+      {loading && homes.length === 0 && (
+        <div className="text-center py-4 text-gray-500">Loading homes...</div>
       )}
 
       {/* Add Surface Button */}
@@ -167,7 +172,7 @@ export default function SurfacesPage() {
 
       {/* Add Surface Form */}
       {showForm && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6 max-h-[600px] overflow-y-auto">
           <h2 className="text-lg font-semibold mb-4">Add New Surface</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
