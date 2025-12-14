@@ -47,6 +47,7 @@ export default function SurfacesPage() {
     try {
       setLoadingHomes(true)
       const data = await api.getHomes()
+      console.log('Loaded homes:', data)
       setHomes(data)
       if (data.length > 0) {
         setSelectedHome(data[0].id)
@@ -176,7 +177,7 @@ export default function SurfacesPage() {
           >
             {homes.map((home) => (
               <option key={home.id} value={home.id}>
-                {home.home_name}
+                {home.name}
               </option>
             ))}
           </select>
