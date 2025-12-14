@@ -3,7 +3,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { SurfacesService } from './surfaces.service';
 import { Surface } from './entities/surface.entity';
 
-@Controller('api/v1/surfaces')
+@Controller('surfaces')
 @UseGuards(JwtAuthGuard)
 export class SurfacesController {
   constructor(private surfacesService: SurfacesService) {}

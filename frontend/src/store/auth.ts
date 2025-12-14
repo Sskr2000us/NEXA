@@ -7,6 +7,8 @@ interface User {
   id: string
   email: string
   fullName?: string
+  phone?: string
+  timezone?: string
 }
 
 interface AuthState {
@@ -55,7 +57,15 @@ export const useAuth = create<AuthState>((set) => ({
     }
 
     try {
-      const user = await api.getCurrentUser()
+      const userData = await api.getCurrentUser()
+      // Map backend field names to frontend
+      const user = {
+        id: userData.id,
+        email: userData.email,
+        fullName: userData.full_name,
+        phone: userData.phone,
+        timezone: userData.timezone,
+      }
       set({ user, isAuthenticated: true, isLoading: false })
     } catch {
       localStorage.removeItem('accessToken')
