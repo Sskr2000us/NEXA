@@ -56,6 +56,32 @@ class ApiClient {
     )
   }
 
+  // Generic HTTP methods
+  async get(url: string, config?: any) {
+    const response = await this.client.get(url, config)
+    return response
+  }
+
+  async post(url: string, data?: any, config?: any) {
+    const response = await this.client.post(url, data, config)
+    return response
+  }
+
+  async patch(url: string, data?: any, config?: any) {
+    const response = await this.client.patch(url, data, config)
+    return response
+  }
+
+  async put(url: string, data?: any, config?: any) {
+    const response = await this.client.put(url, data, config)
+    return response
+  }
+
+  async delete(url: string, config?: any) {
+    const response = await this.client.delete(url, config)
+    return response
+  }
+
   // Auth methods
   async signup(data: {
     email: string
