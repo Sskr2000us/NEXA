@@ -126,7 +126,7 @@ export default function SurfacesPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6 max-w-4xl mx-auto overflow-y-auto h-full">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Surfaces</h1>
         <p className="text-gray-600">
@@ -135,7 +135,7 @@ export default function SurfacesPage() {
       </div>
 
       {/* Home Selector */}
-      {homes.length > 1 && (
+      {homes.length > 0 && (
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Select Home
