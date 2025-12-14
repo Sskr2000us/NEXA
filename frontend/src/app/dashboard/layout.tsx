@@ -59,7 +59,6 @@ export default function DashboardLayout({
     { name: 'Marketplace', href: '/dashboard/marketplace', icon: ShoppingCart },
     { name: 'Installer', href: '/dashboard/installer', icon: Wrench },
     { name: 'OEM Partners', href: '/dashboard/partners', icon: Building2 },
-    { name: 'Integrations', href: '/dashboard/integrations', icon: Plug },
     { name: 'Notifications', href: '/dashboard/notifications', icon: Bell },
   ]
 
